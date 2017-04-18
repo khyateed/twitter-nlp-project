@@ -1,4 +1,21 @@
+# SI 300 Final Project, By Khyatee Desai: Democrats vs. Republicans on Twitter
+#################### README: This project combines HTML from ballotpedia.org with JSON from Twitter.
+# The HTML is parsed to retrieve a list of current US Senators, separated into Democrats and Republicans
+# Each senator name is then passed into the Twitter Search API to retrieve their twitter handle
+# The user then inputs a keyword they would like to search
+# Finally, the keyword is passed with each senator's twitter handle into the Twitter search API to retrieve the number of republican vs democratic senator tweets that contain the given keyword.
+##### NOTE: All requests are commented out to account for rate-limiting and program runntime. 
+
+# Example- Enter a word you want to search (press q to quit): women
+# Dem Tweet Count: 84
+# Repub Tweet Count: 56
+
+
+# ---------------------------------------- IMPORTS AND CREDENTIALS-----------------------------------------------
 import re
+from ggplot import *
+import pandas
+import csv
 import json
 from bs4 import BeautifulSoup
 import requests_oauthlib
@@ -83,26 +100,26 @@ oauth = requests_oauthlib.OAuth1Session(key,
 # use the democratic and republican twitter handles to make individual search requests to retrieve that person's top 5 tweets, and append to text files "dem_tweets.txt" and "repub_tweets.txt"
 							
 						#========================= Democrat Tweets =====================
-infile = open('dem_handles.txt', 'r')
-outfile = open('dem_tweets.txt', 'w')
-text = infile.read()
-handles = text.split(',')
-for handle in handles:
-	r = oauth.get("https://api.twitter.com/1.1/search/tweets.json?", params = {'q':  handle , 'count':5, 'result_type': 'popular'  })
-	data = r.json()
-	try:
-		for status in data['statuses']:
-			outfile.write(status['text']+'\n')
-	except:
-		print('failed')
-outfile.close()
-infile.close()
-
-
-# infile = open('dem_tweets.txt', 'r')
+# infile = open('dem_handles.txt', 'r')
+# outfile = open('dem_tweets.txt', 'w')
 # text = infile.read()
-# all_dem_tweets = text.split('\n')
+# handles = text.split(',')
+# for handle in handles:
+# 	r = oauth.get("https://api.twitter.com/1.1/search/tweets.json?", params = {'q':  handle , 'count':100, 'result_type': 'recent'  })
+# 	data = r.json()
+# 	try:
+# 		for status in data['statuses']:
+# 			outfile.write(status['text']+'\n')
+# 	except:
+# 		print('failed')
+# outfile.close()
 # infile.close()
+
+
+infile = open('dem_tweets.txt', 'r')
+text = infile.read()
+all_dem_tweets = text.split('\n')
+infile.close()
 
 
 						#=============== Republican Tweets ===================
@@ -111,7 +128,7 @@ infile.close()
 # text = infile.read()
 # handles = text.split(',')
 # for handle in handles:
-# 	r = oauth.get("https://api.twitter.com/1.1/search/tweets.json?", params = {'q':  handle , 'count':5, 'result_type': 'popular'  })
+# 	r = oauth.get("https://api.twitter.com/1.1/search/tweets.json?", params = {'q':  handle , 'count':100, 'result_type': 'recent'  })
 # 	data = r.json()
 # 	try:
 # 		for status in data['statuses']:
@@ -123,26 +140,50 @@ infile.close()
 
 
 
-# infile = open('repub_tweets.txt', 'r')
-# text = infile.read()
-# all_repub_tweets = text.split('\n')
-# infile.close()
+infile = open('repub_tweets.txt', 'r')
+text = infile.read()
+all_repub_tweets = text.split('\n')
+infile.close()
 
 #-------------------------------------------STEP 5: CODING-----------------------------------------
+#This step takes a keyword from the user and counts the frequency of that keyword among democrat and republican tweets from the cached text files.
+lod=[]
+dem_total =0
+repub_total=0
+while True:
+	keyword = input("Enter a word you want to search (press q to quit): ")
+	if keyword == 'q':
+		break
+	dic={}
+	dem_count=0
+	for tweet in all_dem_tweets:
+		if keyword.lower() in tweet.lower():
+				dem_count+=1
+	repub_count=0
+	for tweet in all_repub_tweets:
+		if keyword.lower() in tweet.lower():
+				repub_count+=1
+	dem_total+=dem_count
+	repub_total+=repub_count
+	dic["Keyword"]= keyword
+	dic["# Democrat Tweets"] = dem_count
+	dic["# Republican Tweets"] = repub_count
+	lod.append(dic)
+	print("Dem Tweet Count:",dem_count)
+	print("Repub Tweet Count:", repub_count)
+	print(dem_total)
+	print(repub_total)
 
 
-# keyword = input("Enter a word you want to search: ")
-# dem_count=0
-# for tweet in all_dem_tweets:
-# 	if keyword.lower() in tweet.lower():
-# 		dem_count+=1
-# repub_count=0
-# for tweet in all_repub_tweets:
-# 	if keyword.lower() in tweet.lower():
-# 		repub_count+=1
+#-------------------------------------STEP 6: GGPLOT ---------------------------------------
+searches = pandas.DataFrame(lod)
+if dem_total>repub_total:
+	plot =ggplot(searches, aes(x="# Democrat Tweets", y="# Republican Tweets", label="Keyword") ) + geom_text(size=20, color='blue')
+else:
+	plot =ggplot(searches, aes(x="# Democrat Tweets", y="# Republican Tweets", label="Keyword") ) + geom_text(size=20, color='red')
+print(plot)
 
-# print("Dem Tweets:",dem_count)
-# print("Repub Tweets:", repub_count)
+
 
 
 
