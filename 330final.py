@@ -1,5 +1,5 @@
 # SI 300 Final Project, By Khyatee Desai: Democrats vs. Republicans on Twitter
-#################### README: This project combines HTML from ballotpedia.org with JSON from Twitter.
+# This project combines HTML from ballotpedia.org with JSON from Twitter.
 # The HTML is parsed to retrieve a list of current US Senators, separated into Democrats and Republicans
 # Each senator name is then passed into the Twitter Search API to retrieve their twitter handle
 # The user then inputs a keyword they would like to search
@@ -19,10 +19,10 @@ import csv
 import json
 from bs4 import BeautifulSoup
 import requests_oauthlib
-key = 'Et4XxRp4SCDn8wS30EKTJuVZf'
-secret = 'soFn6mtJXNCBFV0cJMrPBOGROwM798TTVGUSjHBLJCwhiUAbcv'
-access_token = '743466833177681922-cRuAJGl4AuO6Wi7PipIiq1ARpBgGeno'
-access_secret = 'kBAlSNgRyaEmHZ0yh6ZfEnG2iNO1NLJqTI6LaenKxCfRQ'
+key = 'Credentials go here'
+secret = 'Credentials go here'
+access_token = 'Credentials go here'
+access_secret = 'Credentials go here'
 
 # ------------------------------------ STEP 1: SCRAPE-----------------------------------------------
 # This step scrapes names of current senators and appends them to the list, "members"
@@ -48,7 +48,7 @@ for person in table:
     	tups.append((lis[1], lis[2]))
     	members.append(tups)
 
-#--------------------------------------- STEP 2: PARTIES------------------------------------
+#--------------------------------------- STEP 2: PARTIES------------------------------------------
 # this step splits members into two lists: democrats and republicans.
 dems=[]
 repubs = []
@@ -64,8 +64,9 @@ for person in members:
 
 
 
-#------------------------------------------STEP 3: HANDLES---------------------------------
-# This step searches twitter api for the names and retrieves a twitter handle, writing it to either "dem_handles.txt" or "repub_handles.txt"
+#------------------------------------------STEP 3: HANDLES------------------------------------------
+# This step searches twitter api for the names and retrieves a twitter handle, writing it to either 
+# "dem_handles.txt" or "repub_handles.txt"
 
 
 oauth = requests_oauthlib.OAuth1Session(key,
@@ -99,7 +100,7 @@ oauth = requests_oauthlib.OAuth1Session(key,
 #------------------------------------------ STEP 4: TWEETS--------------------------------------------------------
 # use the democratic and republican twitter handles to make individual search requests to retrieve that person's top 5 tweets, and append to text files "dem_tweets.txt" and "repub_tweets.txt"
 							
-						#========================= Democrat Tweets =====================
+						#====================== Democrat Tweets ===================
 # infile = open('dem_handles.txt', 'r')
 # outfile = open('dem_tweets.txt', 'w')
 # text = infile.read()
@@ -115,12 +116,10 @@ oauth = requests_oauthlib.OAuth1Session(key,
 # outfile.close()
 # infile.close()
 
-
 infile = open('dem_tweets.txt', 'r')
 text = infile.read()
 all_dem_tweets = text.split('\n')
 infile.close()
-
 
 						#=============== Republican Tweets ===================
 # infile = open('repub_handles.txt', 'r')
@@ -139,14 +138,14 @@ infile.close()
 # infile.close()
 
 
-
 infile = open('repub_tweets.txt', 'r')
 text = infile.read()
 all_repub_tweets = text.split('\n')
 infile.close()
 
-#-------------------------------------------STEP 5: CODING-----------------------------------------
-#This step takes a keyword from the user and counts the frequency of that keyword among democrat and republican tweets from the cached text files.
+#-------------------------------------------STEP 5: KEYWORD-----------------------------------------
+#This step takes a keyword from the user and counts the frequency of that keyword 
+# among democrat and republican tweets from the cached text files.
 lod=[]
 dem_total =0
 repub_total=0
@@ -171,16 +170,21 @@ while True:
 	lod.append(dic)
 	print("Dem Tweet Count:",dem_count)
 	print("Repub Tweet Count:", repub_count)
-	print(dem_total)
-	print(repub_total)
+
 
 
 #-------------------------------------STEP 6: GGPLOT ---------------------------------------
+# This step creates a visualization of the word frequencies using ggplot
+
 searches = pandas.DataFrame(lod)
 if dem_total>repub_total:
-	plot =ggplot(searches, aes(x="# Democrat Tweets", y="# Republican Tweets", label="Keyword") ) + geom_text(size=20, color='blue')
+	plot =ggplot(searches, aes(x="# Democrat Tweets", y="# Republican Tweets", label="Keyword") ) +\
+	geom_text(size=20, color='blue') +\
+    ggtitle("Comparing Tweets: Democrat vs. Republican Senators")
 else:
-	plot =ggplot(searches, aes(x="# Democrat Tweets", y="# Republican Tweets", label="Keyword") ) + geom_text(size=20, color='red')
+	plot =ggplot(searches, aes(x="# Democrat Tweets", y="# Republican Tweets", label="Keyword") ) +\
+	geom_text(size=20, color='red') +\
+    ggtitle("Comparing Tweets: Democrat vs. Republican Senators")
 print(plot)
 
 
