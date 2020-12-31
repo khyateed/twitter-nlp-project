@@ -3,7 +3,7 @@
 ### SI 330 Final Project
 Khyatee Desai
 
-![](images/fig2)
+![](images/fig2.png)
 
 # Background
 This script allows the user to input a keyword that they would like to search on twitter. A cache of all US Senators’ tweets is then parsed for the keyword, and the count frequency is recorded. This count frequency is then displayed on a plot, visualizing how many times Republican vs. Democratic senators have tweeted the given keyword. 
