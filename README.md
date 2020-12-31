@@ -16,19 +16,19 @@ The two data sources I used for this project are an HTML response retrieved from
 # Data Processing Steps
 The script is divided into six consecutive steps, commented into the code:<br>
 In Step 1, an HTML response is retrieved from ballotpedia.org using the requests module. This response is then cached into “step1.html.” Next, BeautifulSoup is used to parse through the HTML and retrieve a list of tuples (the output of this step.) Each tuple contains the name of a current senator, and the name of their political party affiliation (i.e. (Bernie Sanders, Democratic).)<br>
-![](images/step1)
+![](images/step1.png)
 
 In Step 2, the list of tuples is parsed using Regular Expressions to create two separate lists of senator names—one for Democrats, and one for Republicans. These lists are called “dems” and “repubs” respectively.<br>
-![](images/step2)
+![](images/step2.png)
 
 Step 3 makes a request to the Twitter Search API for each name in the above two lists of senators. Then the JSON response is parsed to retrieve a twitter handle for each senator, which is then written to one of two text files (‘dem_handles.txt’ and ‘repub_handles.txt,’) delimited by commas.<br>
-![](images/step3)
+![](images/step3.png)
 
 In Step 4, each of the cached twitter handles is sent through another Twitter Search API request, to retrieve each senator’s most recent 100 tweets. These tweets are saved to the text files ‘dem_tweets.txt’ and ‘repub_tweets.txt’. The files are then split into two lists using the split() function. Each of the two lists contains all of the tweets retrieved from either the Republican or Democratic senators. The two lists are ‘all_repub_tweets’ and ‘all_dem_tweets.’<br>
-![](images/step4)
+![](images/step4.png)
 
 Step 5 of the program asks the user to input a keyword that they would like to search. The lists of democrat and republican tweets are then searched for the keyword, and a count frequency is recorded for each. Then the keyword, the count frequency for the democrat tweets, and the count frequency for the republican tweets are recorded in a dictionary. This dictionary is appended to a list (lod) and the loop is repeated for another keyword, until the user hits “q.”<br>
-![](images/step5)
+![](images/step5.png)
 
 Finally, Step 6 of the program creates a pandas data frame from the list of dictionaries (lod.) This object is then used to make a text-based plot using ggplot. The plot contains # Democrat Tweets on the X axis, and Republican Tweets on the Y axis. Each data point is represented by the text of the keyword that was searched, making the plot easy to understand and analyze. <br>
 
@@ -36,10 +36,10 @@ Finally, Step 6 of the program creates a pandas data frame from the list of dict
 Most of the results from this program followed my predictions. Keywords that are typically more closely tied to and discussed within the Democratic party such as “lgbt,” “women,” and “poverty” had a much higher frequency among Democratic Senators. On the other hand, terms more closely tied to conservative conversations such as “abortion,” “Christian,” and “tradition” had a much higher tweet frequency among Republican Senators.<br>
 
 Below is an example of a string of queries to the program with various keywords followed by their Tweet counts. <br>
-![](images/fig1)
+![](images/fig1.png)
 
 Finally, here is the ggplot visualization of these queries. The terms in the plot appear blue if the majority of tweets came from Democratic senators, and red if they came from Republican senators.
-![](images/fig2)
+![](images/fig2.png)
 
 # Conclusion
 I am pleased with the outcome of this project. I think it was really interesting to pass random keywords into my program and see the sometimes surprising results. As a next step, I would love to include more politicians, such as House of Representative members as well. It could also be interesting to create a graph with nodes and edges to analyze the relationships between each of these politicians. 	
